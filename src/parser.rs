@@ -10,7 +10,7 @@ use std::path::Path;
 use std::str;
 use std::sync::Arc;
 
-use log::error;
+use log::{error, warn};
 
 use quick_xml::encoding::Decoder;
 use quick_xml::events::attributes::AttrError;
@@ -440,10 +440,10 @@ where
 
     match n.as_u64() {
         Some(value) => Ok(value),
-        None => Err(serde::de::Error::custom(format!(
-            "Unable to parse u64 from {}",
-            n
-        ))),
+        None => {
+            warn!("Failed to deserialize counter: {}, set to default value 0", n);
+            Ok(0)
+        }
     }
 }
 
